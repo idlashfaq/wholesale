@@ -1,0 +1,17 @@
+body {
+    background: #f8f9fa;
+}
+.product img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+}
+.product {
+    transition: 0.3s ease;
+}
+.product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.qty-holder{padding-bottom: 15px; display: grid; grid-template-columns: 1fr auto; gap: 15px;}
+.stocks_available{background: #f7a9a9; border-radius: 5px; padding: 5px 15px; font-size: 12px; font-weight: 600; height: 100%; align-items: center; display: inline-flex;}
