@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ہول سیل آرڈر</title>
+
+        <link rel="stylesheet" href="css/styles.css" />
+        
+    </head>
+    <body>
+
+    <h1>ہول سیل آرڈر</h1>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="lays">لییز</div>
+        <div class="tab" data-tab="pepsi">پیپسی</div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="search" placeholder="فلیور تلاش کریں...">
+    </div>
+
+    <!-- Lays Listing -->
+    <div class="shop-name-box">
+        <label>اپنی دکان کا نام درج کریں:</label>
+        <input type="text" id="shopNameInput" placeholder="دکان کا نام لکھیں...">
+    </div>
+    <div class="product-list tab-content" id="lays">
+        <div class="product" data-name="لییز کلاسک" data-price="500" data-pieces="24">
+            <figure class="image">
+                <img src="images/lays/wavy.jpg">
+            </figure>
+            <h3>لییز ویوی</h3>
+            <p>ڈبہ قیمت: روپے 500</p>
+            <p>فی پیک قیمت: روپے <span class="piece-price"></span></p>
+            <p>ریٹیل قیمت فی پیک: روپے <span class="retail-price">70</span></p>
+            <label>ڈبے: <input type="number" class="quantity" value="1" min="1"></label>
+            <br>
+            <a href="#" class="order-btn" onclick="orderNow(this)">واٹس ایپ پر آرڈر کریں</a>
+        </div>
+        <div class="product" data-name="لییز مصالحہ" data-price="1568" data-pieces="24">
+            <figure class="image">
+                <img src="images/lays/masala.jpg">
+            </figure>
+            <h3>لییز مصالحہ</h3>
+            <p>ڈبہ قیمت (ہول سیل): روپے 1568</p>
+            <p>فی پیک قیمت (ہول سیل): روپے <span class="piece-price"></span></p>
+            <p>ریٹیل قیمت فی پیک: روپے <span class="retail-price">70</span></p>
+            <label>ڈبے: <input type="number" class="quantity" value="1" min="1"></label>
+            <br>
+            <a href="#" class="order-btn" onclick="orderNow(this)">واٹس ایپ پر آرڈر کریں</a>
+        </div>
+    </div>
+
+    <!-- Pepsi Listing -->
+    <div class="product-list tab-content" id="pepsi" style="display:none;">
+        <div class="product" data-name="پیپسی بوتل 1.5 لیٹر" data-price="1200" data-pieces="12">
+            <img src="https://i.ibb.co/LPCL7p3/pepsi-1-5l.jpg" alt="پیپسی بوتل 1.5 لیٹر">
+            <h3>پیپسی بوتل 1.5 لیٹر</h3>
+            <p>ڈبہ قیمت: روپے 1200</p>
+            <p>فی بوتل قیمت: روپے <span class="piece-price"></span></p>
+            <label>ڈبے: <input type="number" class="quantity" value="1" min="1"></label>
+            <br>
+            <a href="#" class="order-btn" onclick="orderNow(this)">واٹس ایپ پر آرڈر کریں</a>
+        </div>
+        <div class="product" data-name="پیپسی کین 250 ملی" data-price="900" data-pieces="24">
+            <img src="https://i.ibb.co/VxHqK7m/pepsi-can.jpg" alt="پیپسی کین 250 ملی">
+            <h3>پیپسی کین 250 ملی</h3>
+            <p>ڈبہ قیمت: روپے 900</p>
+            <p>فی کین قیمت: روپے <span class="piece-price"></span></p>
+            <label>ڈبے: <input type="number" class="quantity" value="1" min="1"></label>
+            <br>
+            <a href="#" class="order-btn" onclick="orderNow(this)">واٹس ایپ پر آرڈر کریں</a>
+        </div>
+    </div>
+
+    <script>
+        const vendorNumber = "923001234567"; // واٹس ایپ نمبر
+
+        // Calculate per piece price for all products
+        document.querySelectorAll('.product').forEach(product => {
+            let pricePerBox = parseInt(product.dataset.price);
+            let piecesInBox = parseInt(product.dataset.pieces);
+            let perPiecePrice = (pricePerBox / piecesInBox).toFixed(2);
+            product.querySelector('.piece-price').innerText = perPiecePrice;
+        });
+
+        function orderNow(button) {
+            let enteredShopName = document.getElementById('shopNameInput').value.trim();
+            if (!enteredShopName) {
+                alert("براہ کرم دکان کا نام درج کریں");
+                return;
+            }
+
+            let product = button.closest('.product');
+            let name = product.dataset.name;
+            let pricePerBox = parseInt(product.dataset.price);
+            let piecesInBox = parseInt(product.dataset.pieces);
+            let qty = parseInt(product.querySelector('.quantity').value);
+
+            let perPiecePrice = (pricePerBox / piecesInBox).toFixed(2);
+            let totalPrice = pricePerBox * qty;
+
+            let message = `*${enteredShopName}*\n\nآرڈر کی تفصیل:\nپروڈکٹ: ${name}\nڈبہ قیمت: روپے ${pricePerBox}\nڈبے میں تعداد: ${piecesInBox}\nفی پیس قیمت: روپے ${perPiecePrice}\nکل ڈبے: ${qty}\nکل قیمت: روپے ${totalPrice}`;
+            let url = `https://wa.me/+923224548770?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Search filter
+        document.getElementById('search').addEventListener('keyup', function() {
+            let searchValue = this.value.toLowerCase();
+            document.querySelectorAll('.tab-content:not([style*="display: none"]) .product').forEach(function(product) {
+                let name = product.dataset.name.toLowerCase();
+                product.style.display = name.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+                document.getElementById(tab.dataset.tab).style.display = 'grid';
+            });
+        });
+    </script>
+
+    </body>
+</html>
