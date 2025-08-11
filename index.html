@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wholesale Order</title>
+    <title>Wholesale Point Rashid Pura Lahore</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -24,12 +24,14 @@
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+        .qty-holder{padding-bottom: 15px;}
+        .stocks_available{background: #f7a9a9; border-radius: 5px; padding: 5px 15px; font-size: 12px; font-weight: 600; display: inline-flex;}
     </style>
 </head>
 <body>
 
 <div class="container py-4">
-    <h1 class="text-center mb-4 text-success fw-bold">Wholesale Order</h1>
+    <h1 class="text-center mb-4 text-success fw-bold">Wholesale Point Rashid Pura Lahore</h1>
 
     <!-- Tabs -->
     <ul class="nav nav-tabs justify-content-center mb-3" id="productTabs">
@@ -109,30 +111,54 @@
 
 <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
 
 <script>
-    fetch('data/lays.json')
-    .then(response => response.json())
-    .then(data => {
+    const sheetId = '1nG4mfu5wokKharasKnLjDl5-WA8ICfhJjjTPtcUs3hg';
+    const gid = '0'; // usually 0 for first sheet
+
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+
+    fetch(url)
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text();
+    })
+    .then(csvText => {      
+        const rows = csvText.trim().split('\n');
+        const headers = rows.shift().split(',');
+
+        const data = rows.map(row => {
+            const values = row.split(',');
+            let obj = {};
+            headers.forEach((header, i) => {
+                obj[header] = values[i];
+            });
+            return obj;
+        });
+
+        
         const laysContainer = document.getElementById('lays');
         laysContainer.innerHTML = '';
 
         data.forEach(product => {
-            const perPiecePrice = (product.price / product.pieces).toFixed(2);
-
+            console.log(product);
             const productHTML = `
                 <div class="col-md-4">
                     <div class="card product h-100 p-2 text-center" 
                         data-name="${product.name}" 
-                        data-price="${product.price}" 
-                        data-pieces="${product.pieces}">
-                        <img src="${product.image}" class="card-img-top" alt="${product.name}">
+                        data-price="${product.box_price}" 
+                        data-pieces="${product.total_pieces}">
+                        <img src="${product.product_image}" class="card-img-top" alt="${product.name}">
                         <div class="card-body">
                             <h5 class="card-title">${product.name}</h5>
-                            <p class="fw-bold">Box Price: PKR ${product.price}</p>
-                            <p>Wholesale Price per Pack: PKR <span class="piece-price">${perPiecePrice}</span></p>
-                            <p>Retail Price per Pack: PKR <span class="retail-price">${product.retailPrice}</span></p>
-                            <input type="number" class="form-control quantity mb-3" value="1" min="1">
+                            <p class="fw-bold">Box Price: PKR ${product.box_price}</p>
+                            <p>Wholesale Price per piece: PKR <span class="piece-price">${(product.box_price / product.total_pieces).toFixed(2)}</span></p>
+                            <p>Retail Price per piece: PKR <span class="retail-price">${product.retail_price}</span></p>
+                            <div class="qty-holder">
+                                <input type="number" class="form-control quantity mb-3" value="1" min="1">
+                                <small class="stocks_available">Available Stock: ${product.stock}</small>
+                            </div>
                             <a href="#" class="btn btn-success w-100" onclick="orderNow(this)">Order on WhatsApp</a>
                         </div>
                     </div>
@@ -140,7 +166,33 @@
             `;
             laysContainer.insertAdjacentHTML('beforeend', productHTML);
         });
+
+    })
+    .catch(error => {
+        console.error('Error fetching sheet data:', error);
     });
+
+    function fetchLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    userLocation = `Lat: ${lat}, Lng: ${lng}`;
+                    alert(userLocation);
+                },
+                error => {
+                    userLocation = 'Location permission denied or unavailable';
+                    alert(userLocation);
+                }
+            );
+        } else {
+            userLocation = 'Geolocation not supported';
+            alert(userLocation);
+        }
+    }
+
+    //window.onload = fetchLocation;
 
     let finalOrderURL = "";
     function orderNow(button) {
@@ -160,7 +212,7 @@
 
         let message = `*Shop Name: ${shopName}*\n\nOrder Details:\nProduct: ${name}\nBox Price: PKR ${pricePerBox}\nPieces in Box: ${piecesInBox}\nPrice per Piece: PKR ${perPiecePrice}\nTotal Boxes: ${qty}\nTotal Price: PKR ${totalPrice}`;
         finalOrderURL = `https://wa.me/+923024069411?text=${encodeURIComponent(message)}`;
-        
+
         // Fill modal content
         document.getElementById("orderSummary").innerHTML = `
             <strong>Shop Name:</strong> ${shopName}<br>
@@ -169,7 +221,7 @@
             <strong>Pieces in Box:</strong> ${piecesInBox}<br>
             <strong>Price per Piece:</strong> PKR ${perPiecePrice}<br>
             <strong>Total Boxes:</strong> ${qty}<br>
-            <strong>Total Price:</strong> PKR ${totalPrice}
+            <strong>Total Price:</strong> PKR ${totalPrice}<br>
         `;
 
         // Show modal
