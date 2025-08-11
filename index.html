@@ -24,8 +24,8 @@
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .qty-holder{padding-bottom: 15px;}
-        .stocks_available{background: #f7a9a9; border-radius: 5px; padding: 5px 15px; font-size: 12px; font-weight: 600; display: inline-flex;}
+        .qty-holder{padding-bottom: 15px; display: grid; grid-template-columns: 1fr auto; gap: 15px;}
+        .stocks_available{background: #f7a9a9; border-radius: 5px; padding: 5px 15px; font-size: 12px; font-weight: 600; height: 100%; align-items: center; display: inline-flex;}
     </style>
 </head>
 <body>
@@ -156,7 +156,7 @@
                             <p>Wholesale Price per piece: PKR <span class="piece-price">${(product.box_price / product.total_pieces).toFixed(2)}</span></p>
                             <p>Retail Price per piece: PKR <span class="retail-price">${product.retail_price}</span></p>
                             <div class="qty-holder">
-                                <input type="number" class="form-control quantity mb-3" value="1" min="1">
+                                <input type="number" class="form-control quantity" value="1" min="1">
                                 <small class="stocks_available">Available Stock: ${product.stock}</small>
                             </div>
                             <a href="#" class="btn btn-success w-100" onclick="orderNow(this)">Order on WhatsApp</a>
