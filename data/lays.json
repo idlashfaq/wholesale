@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Lays Wavy",
+        "price": 500,
+        "pieces": 24,
+        "retailPrice": 30,
+        "image": "images/lays/wavy.jpg"
+    },
+    {
+        "name": "Lays Masala",
+        "price": 1568,
+        "pieces": 24,
+        "retailPrice": 70,
+        "image": "images/lays/masala.jpg"
+    },
+    {
+        "name": "Lays Salted",
+        "price": 1500,
+        "pieces": 24,
+        "retailPrice": 65,
+        "image": "images/lays/salted.jpg"
+    }
+]
